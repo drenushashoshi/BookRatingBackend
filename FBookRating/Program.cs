@@ -1,7 +1,11 @@
 using FBookRating.DataAccess.Context;
+using FBookRating.DataAccess.UnitOfWork;
+using FBookRating.Services.IServices;
+using FBookRating.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using FBookRating.Models.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +15,25 @@ var builder = WebApplication.CreateBuilder(args);
 // -M Register db and Identity
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IReviewRatingService, ReviewRatingService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IPublisherService, PublisherService>();
+builder.Services.AddScoped<IEventService, EventService>();
+//builder.Services.AddScoped<ITagService, TagService>();
+
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,7 +77,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<ApplicationUser>();
 
 app.UseHttpsRedirection();
 
@@ -65,5 +86,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
