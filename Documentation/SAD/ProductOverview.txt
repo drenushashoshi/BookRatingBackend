@@ -1,0 +1,43 @@
+2.1 PRODUCT OVERVIEW
+2.1.1 Mission Statement and Background
+BookRating Mission Statement:
+BookRating is a comprehensive platform designed to consolidate book discovery, rating, and management into a single, interactive ecosystem. It addresses the fragmented digital book landscape by enabling users, authors, and publishers to engage through integrated features such as book reviews, personalized wishlists, and event management. The system is built to be secure, scalable, and user-friendly.
+
+2.1.2 Product Vision and Project Scope
+Product Vision:
+BookRating will deliver an engaging platform that:
+•	Centralizes book data from multiple sources.
+•	Enables detailed user reviews and ratings.
+•	Supports personalized wishlists and notifications.
+•	Provides secure, role-based access.
+•	Offers scalability for a growing user base.
+Project Scope:
+The initial release includes:
+•	Core functionalities for book management and rating.
+•	A secure web-based platform built with .NET 6+, EF Core, and SQL Server.
+•	A three-layer architecture (API, Service, Data Access) that supports future scalability enhancements.
+
+
+2.1.3 Stakeholders and Target Market
+Figure 2-1: BookRating Stakeholders
+
+Stakeholder	         Role/Responsibility
+Users	        Book enthusiasts, reviewers, and book club members.
+Authors	        Promote their works and engage directly with readers.
+Publishers 	    Manage book listings and interact with the community.
+Developers	    Build, maintain, and enhance the platform.
+Administrators	Oversee system operations, content moderation, and security.
+
+2.1.4 Assumptions and Constraints
+•	Assumptions:
+o	Users access BookRating through modern browsers and mobile devices.
+o	External APIs (for book data, reviews) are reliable.
+•	Constraints:
+o	The system is built on .NET 6+, using EF Core and SQL Server.
+o	Security is maintained through JWT-based authentication and role-based access, using a third-party Auth0.
+
+2.1.5. Definitions and Acronyms
+•	API: Application Programming Interface
+•	JWT: JSON Web Token
+•	EF Core: Entity Framework Core
+•	DTO: Data Transfer Object

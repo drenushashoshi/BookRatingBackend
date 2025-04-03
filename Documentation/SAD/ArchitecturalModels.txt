@@ -1,0 +1,56 @@
+2.2 ARCHITECTURAL MODELS
+2.2.1  Architecture Overview
+The BookRating system currently implements a three-layer architecture (API, Service, Data Access), which is suitable for the current scope and feature set. However, as the system scales, consideration should be given to evolving towards a more modular architecture such as:
+•	Clean Architecture
+•	Vertical Slice Architecture
+•	Microservices (if warranted by scale and complexity)
+
+2.2.1 API Layer Decomposition
+This layer provides the interface for both web and mobile clients.
+Example Code:
+[ApiController]
+[Route("api/[controller]")]
+public class BaseApiController : ControllerBase
+{
+    // Implementation for request handling and routing.
+}
+
+Key responsibilities:
+•	Request handling
+•	Route definition
+•	Response formatting
+•	Authentication validation
+
+
+2.2.2 Service Layer Decomposition
+The service layer encapsulates the core business logic for processing book reviews, managing wishlists, and other interactions.
+Example Code:
+public interface IBookService
+{
+    Task<IEnumerable<BookReadDTO>> GetAllBooksAsync();
+    Task<BookReadDTO> GetBookByIdAsync(int id);
+    Task<BookReadDTO> CreateBookAsync(BookCreateDTO bookDto);
+    // Additional methods for reviews and wishlists.
+}
+
+Key responsibilities:
+•	Business logic implementation
+•	Data transformation
+•	Validation rules
+•	Transaction management
+
+
+2.2.4 Data Access Layer Decomposition
+This layer abstracts database operations and ensures consistency through Repository and Unit of Work patterns.
+Example Code:
+public interface IUnitOfWork
+{
+    IBookRatingRepository<TEntity> Repository<TEntity>() where TEntity : class;
+    Task<int> CompleteAsync();
+}
+
+Key responsibilities:
+•	Database operations
+•	Entity mapping
+•	Query execution
+•	Transaction coordination

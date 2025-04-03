@@ -1,0 +1,11 @@
+2.9 EVALUATION SCENARIOS (UTILITY TREE)
+To ensure the architecture meets both functional and non-functional requirements, we list evaluation scenarios in a utility tree:
+•	Scenario 1:
+User Login and Authentication
+o	Steps: User submits credentials → API validates via Auth0 → Service retrieves user details → Database verifies credentials.
+o	Evaluation: Response time, security, and error handling.
+•	Scenario 2:
+Book Rating and Review Submission
+o	Steps: User submits a review → API forwards to service → Service validates and persists data → Data Access layer writes to the database.
+o	Evaluation: Transaction consistency, performance, and scalability.
+(A detailed utility tree diagram with at least one scenario elaborated.)

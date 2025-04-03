@@ -1,0 +1,143 @@
+2.4 ARCHITECTURAL DESIGN RATIONALE
+Key design decisions include:
+•	Three-Layer Architecture:
+Chosen for its clear separation of concerns, ease of testing, and future scalability.
+•	Modularity:
+Inspired by AquaLush, the design anticipates potential evolution toward microservices or CQRS if needed.
+•	Security and Performance:
+Utilizes Auth0 authentication, *EF Core caching*, and asynchronous operations to ensure high performance and security.
+•	Flexibility:
+The use of Repository and Unit of Work patterns enables isolated changes without impacting business logic.
+Figure 2-9: Architectural Design Rationale Flowchart
+(Insert a diagram summarizing design trade-offs and decisions)
+2.4.1 Technical Constraints
+●	.NET 6+ framework
+●	Entity Framework Core for ORM
+●	SQL Server database
+●	RESTful API design
+●	JWT authentication
+
+2.4.2 Quality Requirements
+Performance
+   - Response time < 50ms for standard operations
+   - Support for pagination and lazy loading
+Security
+   - JWT-based authentication using Auth0
+   - Role-based authorization
+   - Input validation
+   - XSS protection
+ Maintainability
+   - Modular design
+   - Clear separation of concerns
+   - Consistent coding standards
+   - Comprehensive documentation
+Scalability
+   - Horizontal scaling capability
+   - Caching support
+   - Async operations
+
+2.4.3 Scalability Considerations
+Current Architecture Adequacy:
+- The three-layer architecture effectively serves the current feature set
+- Suitable for the existing user base and performance requirements
+- Maintains good separation of concerns
+
+Future Scaling Considerations:
+- Migration to microservices if specific components need independent scaling
+- Implementation of CQRS pattern for complex read/write operations
+- Event-driven architecture for better decoupling
+- Domain-driven design for complex domain logic
+2.4.4  Performance Considerations
+Caching Strategy
+●	Implementation of response caching
+●	Entity Framework second-level cache
+●	Distributed caching support (Redis recommended for future scaling)
+Optimization Techniques
+●	Async/await patterns
+●	Efficient querying with proper indexing
+●	Pagination implementation
+●	Resource compression
+●	Query optimization and monitoring
+
+Scaling Strategies
+Current Implementation:
+●	Vertical scaling capabilities
+●	Basic caching mechanisms
+●	Connection pooling
+
+Future Considerations:
+●	Horizontal scaling preparation
+●	Load balancing implementation
+●	Database sharding strategy
+●	Message queue integration for async operations
+
+2.5.	Architectural Patterns
+2.5.1 Repository Pattern
+
+```BookRatingRepository.cs
+
+public class BookRatingRepository<TEntity> : IBookRatingRepository<TEntity> where TEntity : class
+{
+    private readonly ApplicationDbContext _context;
+    private readonly DbSet<TEntity> _dbSet;
+
+    public BookRatingRepository(ApplicationDbContext context)
+    {
+        _context = context;
+        _dbSet = context.Set<TEntity>();
+    }
+    // Implementation
+}
+```
+2.5.2 Unit of Work Pattern
+
+```UnitOfWork.cs
+
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly ApplicationDbContext _context;
+    private Hashtable _repositories;
+    
+    // Implementation
+}
+```
+
+
+
+2.6.	Database Architecture
+2.6.1 Entity Relationship Diagram
+ 
+
+2.6.2 Database Design Decisions
+1.	Use of soft deletes where appropriate
+2.	Audit trails through BaseEntity
+3.	Proper indexing strategy
+4.	Relationship constraints
+
+2.7.	 Security Architecture
+Authentication and Authorization: This application leverages ASP.NET Core Identity, a built-in framework for managing user authentication and authorization.
+The ApplicationDbContext class inherits from IdentityDbContext<IdentityUser>, integrating Identity with Entity Framework Core.
+Features include user login, registration, password recovery, role-based access control, and more.
+2.7.1 Authentication
+```Program.cs
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => 
+    {
+        // JWT configuration
+    });
+```
+2.7.2 Authorization
+
+```BookController.cs
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class BookController : BaseApiController
+{
+    // Protected endpoints
+}
+```
+	2.8. Deployment Architecture
+8.1. Deployment Diagram
+
+ 
