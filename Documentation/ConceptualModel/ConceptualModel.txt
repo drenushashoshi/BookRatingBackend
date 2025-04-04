@@ -1,0 +1,16 @@
+1. CONCEPTUAL MODEL
+1.1 UML Class Diagram 
+Figure 1-1: FBookRating Conceptual Model UML Class Diagram
+ 
+1.2 Model Overview
+The conceptual model represents a comprehensive book rating and management system with the following key components:
+Core Entities:
+●	BaseEntity: Abstract base class providing common fields (Id, CreatedAt, UpdatedAt)
+●	Book: Central entity containing publication information
+●	Author: Represents book authors with biographical information
+●	Publisher: Contains publisher details
+●	Category: Enables book classification
+●	ReviewRating: Handles user reviews and ratings
+●	Event: Manages book-related events
+●	ApplicationUser: Represents system users
+●	Wishlist: Manages user book collections

@@ -1,0 +1,7 @@
+2.3 MAPPING BETWEEN MODELS
+Mapping between architectural layers is achieved via well-defined interfaces and transformation layers. The API layer invokes the service layer, which in turn calls the data access layer; data is transferred using DTOs.
+
+Layer	        Responsibilities	                        Mapping Interface/Method
+API Layer	    HTTP request/response handling	            Controllers invoke service methods
+Service Layer	Business logic and data transformation	    Service interfaces call repository methods
+Data Access	    CRUD operations and transaction management	Repository & Unit of Work patterns
