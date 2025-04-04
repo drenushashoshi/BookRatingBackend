@@ -6,9 +6,9 @@ namespace FBookRating.Services.IServices
     public interface ICategoryService
     {
         Task<IEnumerable<CategoryReadDTO>> GetAllCategoriesAsync();
-        Task<CategoryReadDTO> GetCategoryByIdAsync(int id);
+        Task<CategoryReadDTO> GetCategoryByIdAsync(Guid id);
         Task AddCategoryAsync(CategoryCreateDTO categoryCreateDTO);
-        Task UpdateCategoryAsync(int id, CategoryUpdateDTO categoryUpdateDTO);
-        Task DeleteCategoryAsync(int id);
+        Task UpdateCategoryAsync(Guid id, CategoryUpdateDTO categoryUpdateDTO);
+        Task DeleteCategoryAsync(Guid id);
     }
 }

@@ -20,7 +20,6 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await _authorService.GetAllAuthorsAsync();
@@ -28,7 +27,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAuthorById(int id)
+        public async Task<IActionResult> GetAuthorById(Guid id)
         {
             var author = await _authorService.GetAuthorByIdAsync(id);
             if (author == null) return NotFound();

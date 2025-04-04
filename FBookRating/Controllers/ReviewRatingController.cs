@@ -21,7 +21,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet("book/{bookId}")]
-        public async Task<IActionResult> GetReviewsForBook(int bookId)
+        public async Task<IActionResult> GetReviewsForBook(Guid bookId)
         {
             var reviews = await _reviewRatingService.GetReviewsForBookAsync(bookId);
             return Ok(reviews);
@@ -36,7 +36,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet("book/{bookId}/average")]
-        public async Task<IActionResult> GetAverageRatingForBook(int bookId)
+        public async Task<IActionResult> GetAverageRatingForBook(Guid bookId)
         {
             var averageRating = await _reviewRatingService.GetAverageRatingForBookAsync(bookId);
             return Ok(new { AverageRating = averageRating });

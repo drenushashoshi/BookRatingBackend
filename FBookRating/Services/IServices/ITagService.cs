@@ -5,9 +5,9 @@ namespace FBookRating.Services.IServices
     public interface ITagService
     {
         Task<IEnumerable<Tag>> GetAllTagsAsync();
-        Task<Tag> GetTagByIdAsync(int id);
+        Task<Tag> GetTagByIdAsync(Guid id);
         Task AddTagAsync(Tag tag);
-        Task UpdateTagAsync(int id, Tag tag);
-        Task DeleteTagAsync(int id);
+        Task UpdateTagAsync(Guid id, Tag tag);
+        Task DeleteTagAsync(Guid id);
     }
 }

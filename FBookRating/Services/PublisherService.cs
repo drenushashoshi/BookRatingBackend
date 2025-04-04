@@ -27,7 +27,7 @@ namespace FBookRating.Services
             });
         }
 
-        public async Task<PublisherReadDTO> GetPublisherByIdAsync(int id)
+        public async Task<PublisherReadDTO> GetPublisherByIdAsync(Guid id)
         {
             var publisher = await _unitOfWork.Repository<Publisher>().GetByCondition(p => p.Id == id).FirstOrDefaultAsync();
             if (publisher == null) return null;
@@ -54,7 +54,7 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Publisher>().SaveChangesAsync();
         }
 
-        public async Task UpdatePublisherAsync(int id, PublisherUpdateDTO publisherUpdateDTO)
+        public async Task UpdatePublisherAsync(Guid id, PublisherUpdateDTO publisherUpdateDTO)
         {
             var existingPublisher = await _unitOfWork.Repository<Publisher>().GetByCondition(p => p.Id == id).FirstOrDefaultAsync();
             if (existingPublisher == null) throw new Exception("Publisher not found.");
@@ -67,7 +67,7 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Publisher>().SaveChangesAsync();
         }
 
-        public async Task DeletePublisherAsync(int id)
+        public async Task DeletePublisherAsync(Guid id)
         {
             var publisher = await _unitOfWork.Repository<Publisher>().GetByCondition(p => p.Id == id).FirstOrDefaultAsync();
             if (publisher != null)

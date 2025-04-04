@@ -5,8 +5,8 @@ namespace FBookRating.Services.IServices
 {
     public interface IReviewRatingService
     {
-        Task<IEnumerable<ReviewRatingReadDTO>> GetReviewsForBookAsync(int bookId);
+        Task<IEnumerable<ReviewRatingReadDTO>> GetReviewsForBookAsync(Guid bookId);
         Task AddReviewAsync(ReviewRatingCreateDTO reviewRatingDTO, string userId);
-        Task<double> GetAverageRatingForBookAsync(int bookId);
+        Task<double> GetAverageRatingForBookAsync(Guid bookId);
     }
 }

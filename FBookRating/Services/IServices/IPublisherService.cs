@@ -6,9 +6,9 @@ namespace FBookRating.Services.IServices
     public interface IPublisherService
     {
         Task<IEnumerable<PublisherReadDTO>> GetAllPublishersAsync();
-        Task<PublisherReadDTO> GetPublisherByIdAsync(int id);
+        Task<PublisherReadDTO> GetPublisherByIdAsync(Guid id);
         Task AddPublisherAsync(PublisherCreateDTO publisherCreateDTO);
-        Task UpdatePublisherAsync(int id, PublisherUpdateDTO publisherUpdateDTO);
-        Task DeletePublisherAsync(int id);
+        Task UpdatePublisherAsync(Guid id, PublisherUpdateDTO publisherUpdateDTO);
+        Task DeletePublisherAsync(Guid id);
     }
 }

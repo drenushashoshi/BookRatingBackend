@@ -9,7 +9,7 @@ namespace FBookRating.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -20,7 +20,6 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await _bookService.GetAllBooksAsync();
@@ -29,7 +28,7 @@ namespace FBookRating.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetBookById(int id)
+        public async Task<IActionResult> GetBookById(Guid id)
         {
             var book = await _bookService.GetBookByIdAsync(id);
             if (book == null) return NotFound();
@@ -37,21 +36,21 @@ namespace FBookRating.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBook([FromBody] BookCreateDTO bookCreateDTO)
+        public async Task<IActionResult> AddBook([FromForm] BookCreateDTO bookCreateDTO)
         {
             await _bookService.AddBookAsync(bookCreateDTO);
             return Ok("Book created successfully.");
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromBody] BookUpdateDTO bookUpdateDTO)
+        public async Task<IActionResult> UpdateBook(Guid id, [FromForm] BookUpdateDTO bookUpdateDTO)
         {
             await _bookService.UpdateBookAsync(id, bookUpdateDTO);
             return Ok("Book updated successfully.");
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook(int id)
+        public async Task<IActionResult> DeleteBook(Guid id)
         {
             await _bookService.DeleteBookAsync(id);
             return Ok("Book deleted successfully.");

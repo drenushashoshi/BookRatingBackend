@@ -2,17 +2,21 @@
 using FBookRating.Models.DTOs.Book;
 using FBookRating.Models.Entities;
 using FBookRating.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBookRating.Services
 {
+    [Authorize(Roles = "Admin")]
     public class BookService : IBookService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IImageUploadService _imageUploadService;
 
-        public BookService(IUnitOfWork unitOfWork)
+        public BookService(IUnitOfWork unitOfWork, IImageUploadService imageUploadService)
         {
             _unitOfWork = unitOfWork;
+            _imageUploadService = imageUploadService;
         }
 
         public async Task<IEnumerable<BookReadDTO>> GetAllBooksAsync()
@@ -38,7 +42,7 @@ namespace FBookRating.Services
             });
         }
 
-        public async Task<BookReadDTO> GetBookByIdAsync(int id)
+        public async Task<BookReadDTO> GetBookByIdAsync(Guid id)
         {
             var book = await _unitOfWork.Repository<Book>()
                 .GetByCondition(b => b.Id == id)
@@ -65,13 +69,19 @@ namespace FBookRating.Services
 
         public async Task AddBookAsync(BookCreateDTO bookCreateDTO)
         {
+            string imageUrl = null;
+            if (bookCreateDTO.CoverImage != null)
+            {
+                imageUrl = await _imageUploadService.UploadImageAsync(bookCreateDTO.CoverImage);
+            }
+
             var book = new Book
             {
                 Title = bookCreateDTO.Title,
                 ISBN = bookCreateDTO.ISBN,
                 Description = bookCreateDTO.Description,
                 PublishedDate = bookCreateDTO.PublishedDate,
-                CoverImageUrl = bookCreateDTO.CoverImageUrl,
+                CoverImageUrl = imageUrl,
                 CategoryId = bookCreateDTO.CategoryId,
                 AuthorId = bookCreateDTO.AuthorId,
                 PublisherId = bookCreateDTO.PublisherId
@@ -81,16 +91,22 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Book>().SaveChangesAsync();
         }
 
-        public async Task UpdateBookAsync(int id, BookUpdateDTO bookUpdateDTO)
+        public async Task UpdateBookAsync(Guid id, BookUpdateDTO bookUpdateDTO)
         {
             var existingBook = await _unitOfWork.Repository<Book>().GetByCondition(b => b.Id == id).FirstOrDefaultAsync();
             if (existingBook == null) throw new Exception("Book not found.");
+
+            string imageUrl = existingBook.CoverImageUrl;
+            if (bookUpdateDTO.CoverImage != null)
+            {
+                imageUrl = await _imageUploadService.UploadImageAsync(bookUpdateDTO.CoverImage);
+            }
 
             existingBook.Title = bookUpdateDTO.Title;
             existingBook.ISBN = bookUpdateDTO.ISBN;
             existingBook.Description = bookUpdateDTO.Description;
             existingBook.PublishedDate = bookUpdateDTO.PublishedDate;
-            existingBook.CoverImageUrl = bookUpdateDTO.CoverImageUrl;
+            existingBook.CoverImageUrl = imageUrl;
             existingBook.CategoryId = bookUpdateDTO.CategoryId;
             existingBook.AuthorId = bookUpdateDTO.AuthorId;
             existingBook.PublisherId = bookUpdateDTO.PublisherId;
@@ -99,7 +115,7 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Book>().SaveChangesAsync();
         }
 
-        public async Task DeleteBookAsync(int id)
+        public async Task DeleteBookAsync(Guid id)
         {
             var book = await _unitOfWork.Repository<Book>().GetByCondition(b => b.Id == id).FirstOrDefaultAsync();
             if (book != null)

@@ -32,7 +32,7 @@ namespace FBookRating.Services
         /// <summary>
         /// Get a category by ID.
         /// </summary>
-        public async Task<CategoryReadDTO> GetCategoryByIdAsync(int id)
+        public async Task<CategoryReadDTO> GetCategoryByIdAsync(Guid id)
         {
             var category = await _unitOfWork.Repository<Category>().GetByCondition(c => c.Id == id).FirstOrDefaultAsync();
             if (category == null) return null;
@@ -65,7 +65,7 @@ namespace FBookRating.Services
         /// </summary>
         /// <param name="id">ID of the category to update.</param>
         /// <param name="category">Updated category details.</param>
-        public async Task UpdateCategoryAsync(int id, CategoryUpdateDTO categoryUpdateDTO)
+        public async Task UpdateCategoryAsync(Guid id, CategoryUpdateDTO categoryUpdateDTO)
         {
             var existingCategory = await _unitOfWork.Repository<Category>().GetByCondition(c => c.Id == id).FirstOrDefaultAsync();
             if (existingCategory == null) throw new Exception("Category not found.");
@@ -80,7 +80,7 @@ namespace FBookRating.Services
         /// <summary>
         /// Delete a category.
         /// </summary>
-        public async Task DeleteCategoryAsync(int id)
+        public async Task DeleteCategoryAsync(Guid id)
         {
             var category = await _unitOfWork.Repository<Category>().GetByCondition(c => c.Id == id).FirstOrDefaultAsync();
             if (category != null)

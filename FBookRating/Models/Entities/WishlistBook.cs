@@ -2,10 +2,10 @@
 {
     public class WishlistBook
     {
-        public int WishlistId { get; set; }
+        public Guid WishlistId { get; set; }
         public Wishlist Wishlist { get; set; }
 
-        public int BookId { get; set; }
+        public Guid BookId { get; set; }
         public Book Book { get; set; }
 
         // Additional properties for the join table

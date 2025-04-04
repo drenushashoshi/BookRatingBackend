@@ -6,10 +6,10 @@ namespace FBookRating.Services.IServices
     public interface IEventService
     {
         Task<IEnumerable<EventReadDTO>> GetAllEventsAsync();
-        Task<EventReadDTO> GetEventByIdAsync(int id);
+        Task<EventReadDTO> GetEventByIdAsync(Guid id);
         Task AddEventAsync(EventCreateDTO newEventDTO);
-        Task AddBookToEventAsync(int eventId, int bookId);
-        Task RemoveBookFromEventAsync(int eventId, int bookId);
-        Task DeleteEventAsync(int id);
+        Task AddBookToEventAsync(Guid eventId, Guid bookId);
+        Task RemoveBookFromEventAsync(Guid eventId, Guid bookId);
+        Task DeleteEventAsync(Guid id);
     }
 }

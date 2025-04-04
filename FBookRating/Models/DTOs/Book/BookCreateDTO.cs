@@ -6,9 +6,9 @@
         public string ISBN { get; set; }
         public string Description { get; set; }
         public DateTime PublishedDate { get; set; }
-        public string CoverImageUrl { get; set; }
-        public int CategoryId { get; set; }
-        public int? AuthorId { get; set; }
-        public int? PublisherId { get; set; }
+        public IFormFile CoverImage { get; set; }
+        public Guid CategoryId { get; set; }
+        public Guid? AuthorId { get; set; }
+        public Guid? PublisherId { get; set; }
     }
 }

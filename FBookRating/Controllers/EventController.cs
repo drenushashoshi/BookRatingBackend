@@ -27,7 +27,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEventById(int id)
+        public async Task<IActionResult> GetEventById(Guid id)
         {
             var eventEntity = await _eventService.GetEventByIdAsync(id);
             if (eventEntity == null) return NotFound();
@@ -42,14 +42,14 @@ namespace FBookRating.Controllers
         }
 
         [HttpPost("{eventId}/books/{bookId}")]
-        public async Task<IActionResult> AddBookToEvent(int eventId, int bookId)
+        public async Task<IActionResult> AddBookToEvent(Guid eventId, Guid bookId)
         {
             await _eventService.AddBookToEventAsync(eventId, bookId);
             return NoContent();
         }
 
         [HttpDelete("{eventId}/books/{bookId}")]
-        public async Task<IActionResult> RemoveBookFromEvent(int eventId, int bookId)
+        public async Task<IActionResult> RemoveBookFromEvent(Guid eventId, Guid bookId)
         {
             await _eventService.RemoveBookFromEventAsync(eventId, bookId);
             return NoContent();

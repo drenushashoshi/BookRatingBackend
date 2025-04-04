@@ -33,7 +33,7 @@ namespace FBookRating.Services
         /// <summary>
         /// Get an author by ID.
         /// </summary>
-        public async Task<AuthorReadDTO> GetAuthorByIdAsync(int id)
+        public async Task<AuthorReadDTO> GetAuthorByIdAsync(Guid id)
         {
             var author = await _unitOfWork.Repository<Author>().GetByCondition(a => a.Id == id).FirstOrDefaultAsync();
             if (author == null) return null;

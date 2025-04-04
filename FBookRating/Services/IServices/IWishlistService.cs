@@ -7,7 +7,7 @@ namespace FBookRating.Services.IServices
     {
         Task<IEnumerable<WishlistReadDTO>> GetWishlistsByUserAsync(string userId);
         Task AddWishlistAsync(WishlistCreateDTO wishlistDTO, string userId);
-        Task AddBookToWishlistAsync(int wishlistId, int bookId);
-        Task RemoveBookFromWishlistAsync(int wishlistId, int bookId);
+        Task AddBookToWishlistAsync(Guid wishlistId, Guid bookId);
+        Task RemoveBookFromWishlistAsync(Guid wishlistId, Guid bookId);
     }
 }

@@ -37,14 +37,14 @@ namespace FBookRating.Controllers
         }
 
         [HttpPost("{wishlistId}/books/{bookId}")]
-        public async Task<IActionResult> AddBookToWishlist(int wishlistId, int bookId)
+        public async Task<IActionResult> AddBookToWishlist(Guid wishlistId, Guid bookId)
         {
             await _wishlistService.AddBookToWishlistAsync(wishlistId, bookId);
             return NoContent();
         }
 
         [HttpDelete("{wishlistId}/books/{bookId}")]
-        public async Task<IActionResult> RemoveBookFromWishlist(int wishlistId, int bookId)
+        public async Task<IActionResult> RemoveBookFromWishlist(Guid wishlistId, Guid bookId)
         {
             await _wishlistService.RemoveBookFromWishlistAsync(wishlistId, bookId);
             return NoContent();

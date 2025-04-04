@@ -39,7 +39,7 @@ namespace FBookRating.Services
             });
         }
 
-        public async Task<EventReadDTO> GetEventByIdAsync(int id)
+        public async Task<EventReadDTO> GetEventByIdAsync(Guid id)
         {
             var eventEntity = await _unitOfWork.Repository<Event>()
                 .GetByCondition(e => e.Id == id)
@@ -79,14 +79,14 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Event>().SaveChangesAsync();
         }
 
-        public async Task AddBookToEventAsync(int eventId, int bookId)
+        public async Task AddBookToEventAsync(Guid eventId, Guid bookId)
         {
             var bookEvent = new BookEvent { EventId = eventId, BookId = bookId };
             _unitOfWork.Repository<BookEvent>().Create(bookEvent);
             await _unitOfWork.Repository<BookEvent>().SaveChangesAsync();
         }
 
-        public async Task RemoveBookFromEventAsync(int eventId, int bookId)
+        public async Task RemoveBookFromEventAsync(Guid eventId, Guid bookId)
         {
             var bookEvent = await _unitOfWork.Repository<BookEvent>()
                 .GetByCondition(be => be.EventId == eventId && be.BookId == bookId)
@@ -99,7 +99,7 @@ namespace FBookRating.Services
             }
         }
 
-        public async Task DeleteEventAsync(int id)
+        public async Task DeleteEventAsync(Guid id)
         {
             var eventEntity = await _unitOfWork.Repository<Event>()
                 .GetByCondition(e => e.Id == id)

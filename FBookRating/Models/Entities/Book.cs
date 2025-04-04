@@ -14,7 +14,7 @@ namespace FBookRating.Models.Entities
         public ICollection<ReviewRating> ReviewRatings { get; set; }
 
         // Association: A book belongs to one category
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; }
 
         // Association: A book can have multiple tags.
@@ -22,11 +22,11 @@ namespace FBookRating.Models.Entities
 
 
         // Aggregation
-        public int? AuthorId { get; set; }
+        public Guid? AuthorId { get; set; }
         public Author Author { get; set; }
 
         // Aggregation
-        public int? PublisherId { get; set; }
+        public Guid? PublisherId { get; set; }
         public Publisher Publisher { get; set; }
 
 

@@ -5,7 +5,7 @@ using FBookRating.Models.Entities;
 
 namespace FBookRating.DataAccess.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
         base(options)
@@ -14,6 +14,8 @@ namespace FBookRating.DataAccess.Context
 
 
         // DbSets for application-specific entities
+
+        public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<ReviewRating> ReviewRatings { get; set; }
         public DbSet<Category> Categories { get; set; }

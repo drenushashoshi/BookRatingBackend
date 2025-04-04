@@ -29,7 +29,7 @@ namespace FBookRating.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCategoryById(int id)
+        public async Task<IActionResult> GetCategoryById(Guid id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null) return NotFound();
@@ -45,14 +45,14 @@ namespace FBookRating.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
+        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
         {
             await _categoryService.UpdateCategoryAsync(id, categoryUpdateDTO);
             return Ok("Category updated successfully.");
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(Guid id)
         {
             await _categoryService.DeleteCategoryAsync(id);
             return Ok("Category deleted successfully.");

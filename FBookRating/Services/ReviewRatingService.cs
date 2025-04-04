@@ -15,7 +15,7 @@ namespace FBookRating.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<ReviewRatingReadDTO>> GetReviewsForBookAsync(int bookId)
+        public async Task<IEnumerable<ReviewRatingReadDTO>> GetReviewsForBookAsync(Guid bookId)
         {
             var reviews = await _unitOfWork.Repository<ReviewRating>()
                 .GetByCondition(r => r.BookId == bookId)
@@ -47,7 +47,7 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<ReviewRating>().SaveChangesAsync();
         }
 
-        public async Task<double> GetAverageRatingForBookAsync(int bookId)
+        public async Task<double> GetAverageRatingForBookAsync(Guid bookId)
         {
             var ratings = await _unitOfWork.Repository<ReviewRating>()
                 .GetByCondition(r => r.BookId == bookId)

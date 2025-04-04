@@ -6,7 +6,7 @@ namespace FBookRating.Services.IServices
     public interface IAuthorService
     {
         Task<IEnumerable<AuthorReadDTO>> GetAllAuthorsAsync();
-        Task<AuthorReadDTO> GetAuthorByIdAsync(int id);
+        Task<AuthorReadDTO> GetAuthorByIdAsync(Guid id);
         Task AddAuthorAsync(AuthorCreateDTO authorDTO);
 
         /*

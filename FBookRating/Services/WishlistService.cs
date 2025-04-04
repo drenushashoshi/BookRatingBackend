@@ -50,7 +50,7 @@ namespace FBookRating.Services
             await _unitOfWork.Repository<Wishlist>().SaveChangesAsync();
         }
 
-        public async Task AddBookToWishlistAsync(int wishlistId, int bookId)
+        public async Task AddBookToWishlistAsync(Guid wishlistId, Guid bookId)
         {
             var wishlistBookExists = await _unitOfWork.Repository<WishlistBook>()
                 .GetByCondition(wb => wb.WishlistId == wishlistId && wb.BookId == bookId)
@@ -70,7 +70,7 @@ namespace FBookRating.Services
             }
         }
 
-        public async Task RemoveBookFromWishlistAsync(int wishlistId, int bookId)
+        public async Task RemoveBookFromWishlistAsync(Guid wishlistId, Guid bookId)
         {
             var wishlistBook = await _unitOfWork.Repository<WishlistBook>()
                 .GetByCondition(wb => wb.WishlistId == wishlistId && wb.BookId == bookId)

@@ -29,7 +29,7 @@ namespace FBookRating.Controllers
 
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPublisherById(int id)
+        public async Task<IActionResult> GetPublisherById(Guid id)
         {
             var publisher = await _publisherService.GetPublisherByIdAsync(id);
             if (publisher == null) return NotFound();
@@ -44,7 +44,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePublisher(int id, [FromBody] PublisherUpdateDTO publisherUpdateDTO)
+        public async Task<IActionResult> UpdatePublisher(Guid id, [FromBody] PublisherUpdateDTO publisherUpdateDTO)
         {
             await _publisherService.UpdatePublisherAsync(id, publisherUpdateDTO);
             return Ok("Publisher updated successfully.");
@@ -52,7 +52,7 @@ namespace FBookRating.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePublisher(int id)
+        public async Task<IActionResult> DeletePublisher(Guid id)
         {
             await _publisherService.DeletePublisherAsync(id);
             return Ok("Publisher deleted successfully.");
