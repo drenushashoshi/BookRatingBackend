@@ -5,23 +5,57 @@ The BookRating system currently implements a three-layer architecture (API, Serv
 •	Vertical Slice Architecture
 •	Microservices (if warranted by scale and complexity)
 
+Layer	Responsibilities
+API Layer	Serves as the system's external interface, handling request validation, authentication, authorization, and serialization. Enforces security and rate limiting while ensuring a consistent contract for clients.
+Service Layer	Encapsulates business logic and orchestrates workflows between components. Implements domain-driven operations, enforces invariants, and ensures transactional consistency. May include caching strategies for performance optimization.
+Data Access Layer	Manages interactions with persistent storage, abstracting database operations through repositories or ORM layers. Optimized for efficient queries, indexing, and connection pooling. Supports data integrity and consistency through ACID-compliant transactions where needed.
+
 2.2.1 API Layer Decomposition
-This layer provides the interface for both web and mobile clients.
+This layer provides the interface for both web and mobile clients. The API Layer acts as the system’s external interface, processing incoming requests and ensuring proper communication between clients and the internal system. It handles authentication, authorization, request validation, and serialization. This layer enforces security policies such as rate limiting and ensures a standardized contract for external consumers.
 Example Code:
 [ApiController]
 [Route("api/[controller]")]
 public class BaseApiController : ControllerBase
 {
     // Implementation for request handling and routing.
-}
-
-Key responsibilities:
-•	Request handling
-•	Route definition
-•	Response formatting
-•	Authentication validation
+} 
 
 
+
+Figure 2-1 API Layer Structurer
+  
+
+2.2.1.1 API Layer Module Responsibilities
+Module	Responsibilities
+Account Creation	- Provide endpoints for user registration and account management 
+- Validate incoming user data (e.g., username, password)
+- Forward valid requests to the Service Layer
+Book Posting	- Expose endpoints for creating and updating book information 
+- Ensure required fields (e.g., title, author) are present 
+- Pass validated data to the Service Layer
+Book Rating	- Handle HTTP requests to rate books 
+- Validate rating values (e.g., within 1–5)
+ - Delegate rating logic to the Service Layer
+Event Posting	- Offer endpoints for posting new events 
+- Validate event details (e.g., date, location) 
+- Send validated data to the Service Layer
+Wishlist Adding	- Provide endpoints to add items to a user’s wishlist 
+- Verify user permissions and item uniqueness
+- Forward valid wishlist operations to the Service Layer
+
+Controllers in the API layer focus on request validation and delegation to the appropriate Service. They do not contain business logic themselves.
+
+2.2.1.2. API Layer Interface Specifications
+Functionality	Syntax	Preconditions	Postconditions
+Create a user	createUser(username: String, password: String, role: String): User	username, password, and role are not null.	A new user (admin or regular) is created and stored in the database.
+Authenticate a user	authenticate(username: String, password: String): Token	username and password are not null.	A JWT token is returned if authentication is successful.
+Add a book	addBook(title: String, author: String, ISBN: String, publicationDate: Date): Book	title, author, and ISBN are not null.	The book is added to the system.
+Add book to wishlist	addToWishlist(userId: UUID, bookId: UUID): WishlistItem	userId and bookId exist in the system.	The book is added to the user’s wishlist.
+Rate a book	rateBook(userId: UUID, bookId: UUID, rating: Int): Rating	rating is between 1 and 5.	The rating is saved and updates the book’s average rating.
+The API Layer serves as the entry point to the system. It is responsible for handling HTTP requests and formatting responses. The interface specifications listed in this table define the endpoints available to external clients. Each function specifies the syntax for the method, along with preconditions that must be met (such as non-null values or valid data) before the method is invoked, and the expected postconditions (what the method guarantees after execution). For example, when a client calls createUser, the system checks that all required fields (username, password, and role) are provided. If they are, the API layer forwards the request to the service layer, ensuring that a new user is created and stored in the database.
+2.2.1.3. API Layer Design Rationale
+Several alternatives were evaluated for handling the presentation and request-processing concerns of the application. Initially, one idea was to embed substantial business logic directly within the controllers to speed up development. However, this approach led to tangled code that was hard to test and maintain. Instead, the API layer was designed strictly as a façade for HTTP request/response handling. By restricting controllers to tasks such as request validation, routing, and response formatting, we ensure that business logic is isolated and easily replaceable.
+The decision to use a dedicated API layer also considers future security requirements and the need for consistent error handling across all endpoints. Centralizing these concerns in the API layer allows us to apply cross-cutting policies (such as authentication, logging, and rate limiting) uniformly. This design promotes clarity and separation of concerns, ensuring that any changes in the user interface or communication protocol have minimal impact on the business logic.
 2.2.2 Service Layer Decomposition
 The service layer encapsulates the core business logic for processing book reviews, managing wishlists, and other interactions.
 Example Code:
@@ -39,8 +73,40 @@ Key responsibilities:
 •	Validation rules
 •	Transaction management
 
+Figure 2-2 Service Layer Structure
+ 
 
-2.2.4 Data Access Layer Decomposition
+2.2.2.1 Service Layer Module Responsibilities
+Module	Responsibilities
+Account Creation	- Enforce account registration rules (e.g., password complexity, unique email)  
+-Coordinate repository calls through UnitOfWork  
+- Return account data or errors to the API Layer
+Book Posting	- Validate and process book data (e.g., check for duplicates, enforce domain constraints) 
+- Handle transactions for adding/updating books 
+- Return processed results to API Layer
+Book Rating	- Check rating constraints (e.g., min/max rating) 
+- Calculate average rating or other aggregates if needed 
+- Manage transactional updates to rating records
+Event Posting	- Validate event details (e.g., date/time constraints) 
+- Possibly trigger notifications or asynchronous tasks 
+- Ensure all event operations occur in a single transaction
+Wishlist Adding	- Enforce wishlist business rules (e.g., limit duplicates, max items) 
+- Manage adding/removing items within a transaction 
+- Communicate final status to API Layer
+
+Services encapsulate business logic and transaction management. They coordinate with repositories in the Data Access Layer to fulfill operations while enforcing domain rules.
+
+2.2.2.2. Service Layer Interface Specifications
+Functionality	Syntax	Preconditions	Postconditions
+Validate user authentication	validateUser(token: String): User	token is valid and not expired.	Returns user information if the token is valid.
+Retrieve a book	getBook(bookId: UUID): Book	bookId exists in the system.	Returns book details if found.
+Process wishlist	processWishlist(userId: UUID, bookId: UUID): WishlistItem	The book is available in the system.	The book is added to the user’s wishlist.
+Calculate average rating	calculateAverageRating(bookId: UUID): Float	bookId exists in the system.	Returns the updated average rating for the book.
+The Service Layer encapsulates the core business logic and coordinates data transformation between the API and the Data Access layers. The table for the Service Layer describes methods that are responsible for validating user tokens, retrieving book details, processing wishlists, and calculating book ratings. Each method includes specific preconditions to ensure that inputs are valid and expected postconditions that guarantee the business rules are enforced. For instance, validateUser checks the validity and expiration of the provided token and returns the corresponding user information if successful. This layer abstracts the complexity of business processes, ensuring that the API layer remains simple and focused solely on request/response handling.
+2.2.2.3. Service Layer Design Rationale
+The Service Layer was conceived to encapsulate all business rules and domain logic, separating them from both presentation and persistence concerns. Early prototypes experimented with merging business logic with either the API or Data Access layers; however, such approaches resulted in a system that was difficult to extend and test. By isolating business operations into dedicated service components, we ensure that the core functionality—such as account validation, book posting, rating calculations, event scheduling, and wishlist management—remains cohesive and independent.
+This separation allows for easier unit testing and maintenance, as each service can be developed, debugged, and updated in isolation. Additionally, using the Service Layer as an intermediary enables effective coordination of transactions across multiple operations (through patterns like UnitOfWork) and promotes the reuse of business logic across different modules. This approach also supports the eventual integration of asynchronous operations or additional business processes without impacting the overall system structure.
+2.2.3 Data Access Layer Decomposition
 This layer abstracts database operations and ensures consistency through Repository and Unit of Work patterns.
 Example Code:
 public interface IUnitOfWork
@@ -54,3 +120,38 @@ Key responsibilities:
 •	Entity mapping
 •	Query execution
 •	Transaction coordination
+
+Figure 2-3 Data Access Layer Structure
+ 
+
+2.2.3.1 Data Access Layer Module Responsibilities
+Module	Responsibilities
+Account Creation	- Persist user records in the database 
+- Abstract CRUD operations (e.g., Add, Update, GetById) for accounts 
+- Ensure data integrity through consistent repository methods
+Book Posting	- Handle book entity persistence (create, update, delete) 
+- Possibly cache or index book data for performance 
+- Maintain consistent queries for book records
+Book Rating	- Store and retrieve rating data 
+- Execute rating-specific queries (e.g., get average rating by book) 
+- Coordinate with UnitOfWork for multi-step rating transactions
+Event Posting	- Persist event details (e.g., date, location, description)
+- Provide queries to retrieve upcoming or past events 
+- Maintain transactional integrity via UnitOfWork
+Wishlist Adding	- Store wishlist items for each user 
+- Check for duplicates (if required by domain rules) 
+- Utilize UnitOfWork for atomic add/remove wishlist operations
+
+Repositories in the Data Access Layer abstract direct database interactions. They rely on the shared DbContext (or equivalent) to perform queries, while the UnitOfWork ensures all repository operations for a given transaction succeed or roll back together.
+
+2.2.3.2. Data Access Layer Interface Specifications
+Functionality	Syntax	Preconditions	Postconditions
+Save user	saveUser(user: User): void	user is not null.	The user is stored in the database.
+Get user	getUser(userId: UUID): User	userId exists in the database.	Returns user details.
+Save book	saveBook(book: Book): void	book is not null.	The book is stored in the database.
+Get book	getBook(bookId: UUID): Book	bookId exists in the database.	Returns book details.
+Save rating	saveRating(rating: Rating): void	rating is within the valid range (1–5).	The rating is stored and contributes to the average rating of the book.
+The Data Access Layer is responsible for interacting directly with the database. This table details the CRUD operations for users, books, and ratings. It provides a clear contract on how data is saved and retrieved, ensuring that all interactions with the persistent storage adhere to defined constraints such as data integrity and transaction management. For example, the saveUser method will store a validated user entity in the database, and the getUser method retrieves user details based on a unique identifier. By using these repository methods, the Service Layer can maintain a consistent and reliable mechanism for data persistence while isolating database-specific logic from the higher-level business operations.
+2.2.3.3. Data Access Layer Design Rationale
+In early design alternatives, direct database calls were embedded within the Service Layer, which led to a tight coupling between business logic and persistence mechanisms. This approach was found to reduce flexibility and complicate testing and maintenance. The Data Access Layer was therefore established as a dedicated abstraction to handle all database interactions using repository patterns and, optionally, the UnitOfWork pattern for transaction management.
+By encapsulating data operations within repository interfaces, we can isolate the rest of the application from changes in the underlying database technology or schema. This modularization ensures that persistence logic is concentrated in one place, making it easier to optimize queries, enforce data integrity, and implement caching strategies if needed. The clear separation of the Data Access Layer also facilitates better scalability and easier integration of data sources, such as migrating to a different database system or incorporating additional data stores in the future.
