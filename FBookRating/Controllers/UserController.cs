@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿/*
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using FBookRating.Models.Entities;
 using FBookRating.Models.DTOs.User;
 
 namespace FBookRating.Controllers
@@ -56,3 +55,4 @@ namespace FBookRating.Controllers
     }
 
 }
+*/

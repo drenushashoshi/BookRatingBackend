@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FBookRating", "FBookRating\FBookRating.csproj", "{9167DE5A-37D9-4329-AFBF-7B0A6EF65EF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FBookRating", "FBookRating\FBookRating.csproj", "{9167DE5A-37D9-4329-AFBF-7B0A6EF65EF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data_Access_Layer", "Data_Access_Layer\Data_Access_Layer.csproj", "{2FB43A9E-2C38-49C6-AE23-F3F329AF6CBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business_Logic_Layer", "Business_Logic_Layer\Business_Logic_Layer.csproj", "{859C05D0-EC91-4CF7-AA37-E7BF1FA66D82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{9167DE5A-37D9-4329-AFBF-7B0A6EF65EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9167DE5A-37D9-4329-AFBF-7B0A6EF65EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9167DE5A-37D9-4329-AFBF-7B0A6EF65EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FB43A9E-2C38-49C6-AE23-F3F329AF6CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FB43A9E-2C38-49C6-AE23-F3F329AF6CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FB43A9E-2C38-49C6-AE23-F3F329AF6CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FB43A9E-2C38-49C6-AE23-F3F329AF6CBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859C05D0-EC91-4CF7-AA37-E7BF1FA66D82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859C05D0-EC91-4CF7-AA37-E7BF1FA66D82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859C05D0-EC91-4CF7-AA37-E7BF1FA66D82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859C05D0-EC91-4CF7-AA37-E7BF1FA66D82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,4 @@
 ﻿using FBookRating.Models.DTOs.Author;
-using FBookRating.Models.Entities;
-using FBookRating.Services;
 using FBookRating.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +7,6 @@ namespace FBookRating.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
@@ -35,6 +32,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddAuthor([FromBody] AuthorCreateDTO authorDTO)
         {
             await _authorService.AddAuthorAsync(authorDTO);

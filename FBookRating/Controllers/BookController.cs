@@ -1,6 +1,4 @@
 ﻿using FBookRating.Models.DTOs.Book;
-using FBookRating.Models.Entities;
-using FBookRating.Services;
 using FBookRating.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +18,7 @@ namespace FBookRating.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await _bookService.GetAllBooksAsync();

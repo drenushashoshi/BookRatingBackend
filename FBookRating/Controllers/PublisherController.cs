@@ -1,5 +1,4 @@
 ﻿using FBookRating.Models.DTOs.Publisher;
-using FBookRating.Models.Entities;
 using FBookRating.Services;
 using FBookRating.Services.IServices;
 using Microsoft.AspNetCore.Authorization;

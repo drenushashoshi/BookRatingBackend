@@ -1,17 +1,14 @@
-using FBookRating.DataAccess.Context;
-using FBookRating.DataAccess.UnitOfWork;
 using FBookRating.Services.IServices;
 using FBookRating.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using FBookRating.Models.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using FBookRating.DataAccess.Seed;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Business_Logic_Layer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // -M Register db and Identity
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
@@ -44,8 +41,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
@@ -55,7 +50,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddHttpClient<IImageUploadService, ImageUploadService>();
-builder.Services.AddTransient<IEmailSender<ApplicationUser>, NullEmailSender>();
+//builder.Services.AddTransient<IEmailSender<ApplicationUser>, NullEmailSender>();
 //builder.Services.AddScoped<ITagService, TagService>();
 
 
@@ -132,7 +127,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<ApplicationUser>();
+//app.MapIdentityApi<ApplicationUser>();
 
 app.UseHttpsRedirection();
 

@@ -1,6 +1,4 @@
 ﻿using FBookRating.Models.DTOs.WishList;
-using FBookRating.Models.Entities;
-using FBookRating.Services;
 using FBookRating.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
