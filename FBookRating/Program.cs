@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Business_Logic_Layer;
+using Business_Logic_Layer.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,38 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     options.Audience = builder.Configuration["Auth0:Audience"];
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        NameClaimType = ClaimTypes.NameIdentifier
+        NameClaimType = ClaimTypes.NameIdentifier,
+        RoleClaimType = "https://lab1.com/roles"
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var claimsPrincipal = context.Principal;
+
+            // Extract claims using the names from your Auth0 configuration
+            var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value; // typically the 'sub' claim
+            var userName = claimsPrincipal.FindFirst("https://lab1.com/username")?.Value;
+            // Optionally, you might use the "nickname" or "name" claim for DisplayName
+            var displayName = claimsPrincipal.FindFirst("nickname")?.Value ?? userName;
+            var email = claimsPrincipal.FindFirst("https://lab1.com/email")?.Value;
+            var profilePictureUrl = claimsPrincipal.FindFirst("picture")?.Value;
+
+            // Resolve your user service from the dependency injection container
+            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+
+            // Create or update the user record in your database
+            await userService.CreateOrUpdateUserAsync(userId, userName, displayName, email, profilePictureUrl);
+        },
+        OnAuthenticationFailed = context =>
+        {
+            // Optionally handle authentication failures here
+            return Task.CompletedTask;
+        }
+    };
+
+
 });
 
 
@@ -50,6 +81,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddHttpClient<IImageUploadService, ImageUploadService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 //builder.Services.AddTransient<IEmailSender<ApplicationUser>, NullEmailSender>();
 //builder.Services.AddScoped<ITagService, TagService>();
 

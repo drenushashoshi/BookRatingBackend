@@ -7,7 +7,8 @@ namespace FBookRating.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
+
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
