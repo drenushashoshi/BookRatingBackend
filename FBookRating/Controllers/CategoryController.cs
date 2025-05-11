@@ -52,8 +52,15 @@ namespace FBookRating.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            await _categoryService.DeleteCategoryAsync(id);
-            return Ok("Category deleted successfully.");
+            try
+            {
+                await _categoryService.DeleteCategoryAsync(id);
+                return Ok("Category deleted successfully.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
     }
 }

@@ -82,12 +82,20 @@ namespace FBookRating.Services
         /// </summary>
         public async Task DeleteCategoryAsync(Guid id)
         {
-            var category = await _unitOfWork.Repository<Category>().GetByCondition(c => c.Id == id).FirstOrDefaultAsync();
-            if (category != null)
-            {
-                _unitOfWork.Repository<Category>().Delete(category);
-                await _unitOfWork.Repository<Category>().SaveChangesAsync();
-            }
+            var category = await _unitOfWork.Repository<Category>().GetByCondition(c => c.Id == id).Include(c => c.Books).FirstOrDefaultAsync();
+
+            if (category == null)
+                return;
+
+
+            if (category.Books.Any())
+                throw new InvalidOperationException(
+                    "Cannot delete category because books are still assigned.");
+
+
+            _unitOfWork.Repository<Category>().Delete(category);
+            await _unitOfWork.Repository<Category>().SaveChangesAsync();
+            
         }
     }
 }
