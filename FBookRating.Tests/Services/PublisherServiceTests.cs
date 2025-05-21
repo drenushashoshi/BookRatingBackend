@@ -111,7 +111,7 @@ namespace FBookRating.Tests.Services
                 seedContext.SaveChanges();
             }
 
-            var updateDTO = new PublisherUpdateDTO
+            var updateDto = new PublisherUpdateDTO
             {
                 Name = "Updated Name",
                 Website = "https://www.updated.com",
@@ -121,7 +121,7 @@ namespace FBookRating.Tests.Services
             using (var context = new ApplicationDbContext(opts))
             {
                 var service = new PublisherService(new UnitOfWork(context));
-                await service.UpdatePublisherAsync(publisherId, updateDTO);
+                await service.UpdatePublisherAsync(publisherId, updateDto);
             }
 
             using (var verifyContext = new ApplicationDbContext(opts))
@@ -183,9 +183,9 @@ namespace FBookRating.Tests.Services
             var opts = CreateNewContextOptions(nameof(AddPublisherAsync_WithMissingRequiredFields_ShouldThrowValidationException));
             var invalidPublisherDTO = new PublisherCreateDTO
             {
-                Name = null,
-                Website = null,
-                Address = null
+                Name = string.Empty,
+                Website = string.Empty,
+                Address = string.Empty
             };
 
             using (var context = new ApplicationDbContext(opts))

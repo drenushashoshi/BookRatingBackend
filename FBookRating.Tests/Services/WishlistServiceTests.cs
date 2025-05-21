@@ -244,16 +244,13 @@ namespace FBookRating.Tests.Services
         {
             var opts = CreateNewContextOptions(nameof(AddWishlistAsync_WithMissingRequiredFields_ShouldThrowValidationException));
             var userId = "test-user-id";
-            var invalidWishlistDTO = new WishlistCreateDTO
-            {
-                Name = null
-            };
+            var createDto = new WishlistCreateDTO { Name = string.Empty };
 
             using (var context = new ApplicationDbContext(opts))
             {
                 var service = new WishlistService(new UnitOfWork(context));
                 var exception = await Assert.ThrowsAsync<ValidationException>(() => 
-                    service.AddWishlistAsync(invalidWishlistDTO, userId));
+                    service.AddWishlistAsync(createDto, userId));
             }
         }
 
