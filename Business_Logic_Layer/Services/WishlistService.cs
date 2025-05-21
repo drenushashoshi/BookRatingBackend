@@ -3,6 +3,7 @@ using Data_Access_Layer.UnitOfWork;
 using FBookRating.Models.DTOs.WishList;
 using FBookRating.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace FBookRating.Services
 {
@@ -40,6 +41,18 @@ namespace FBookRating.Services
 
         public async Task AddWishlistAsync(WishlistCreateDTO wishlistDTO, string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ValidationException("User ID is required");
+            }
+
+            var validationContext = new ValidationContext(wishlistDTO);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(wishlistDTO, validationContext, validationResults, true))
+            {
+                throw new ValidationException(validationResults.First().ErrorMessage);
+            }
+
             var wishlist = new Wishlist
             {
                 Name = wishlistDTO.Name,
@@ -52,22 +65,23 @@ namespace FBookRating.Services
 
         public async Task AddBookToWishlistAsync(Guid wishlistId, Guid bookId)
         {
-            var wishlistBookExists = await _unitOfWork.Repository<WishlistBook>()
-                .GetByCondition(wb => wb.WishlistId == wishlistId && wb.BookId == bookId)
-                .AnyAsync();
-
-            if (!wishlistBookExists)
+            if (wishlistId == Guid.Empty || bookId == Guid.Empty)
             {
-                var wishlistBook = new WishlistBook
-                {
-                    WishlistId = wishlistId,
-                    BookId = bookId,
-                    AddedDate = DateTime.UtcNow
-                };
-
-                _unitOfWork.Repository<WishlistBook>().Create(wishlistBook);
-                await _unitOfWork.Repository<WishlistBook>().SaveChangesAsync();
+                throw new ValidationException("Invalid Wishlist ID or Book ID");
             }
+
+            var existingBook = await _unitOfWork.Repository<WishlistBook>()
+                .GetByCondition(wb => wb.WishlistId == wishlistId && wb.BookId == bookId)
+                .FirstOrDefaultAsync();
+
+            if (existingBook != null)
+            {
+                throw new ValidationException("Book is already in the wishlist");
+            }
+
+            var bookEvent = new WishlistBook { WishlistId = wishlistId, BookId = bookId, AddedDate = DateTime.UtcNow };
+            _unitOfWork.Repository<WishlistBook>().Create(bookEvent);
+            await _unitOfWork.Repository<WishlistBook>().SaveChangesAsync();
         }
 
         public async Task RemoveBookFromWishlistAsync(Guid wishlistId, Guid bookId)

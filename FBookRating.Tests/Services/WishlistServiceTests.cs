@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Data_Access_Layer;
+using System.ComponentModel.DataAnnotations;
 
 namespace FBookRating.Tests.Services
 {
@@ -141,32 +142,32 @@ namespace FBookRating.Tests.Services
             var opts = CreateNewContextOptions(nameof(AddBookToWishlistAsync_WhenBookAlreadyInWishlist_ShouldNotAddBook));
             var wishlistId = Guid.NewGuid();
             var bookId = Guid.NewGuid();
+
             using (var seedContext = new ApplicationDbContext(opts))
             {
-                seedContext.Books.Add(new Book {
-                    Id = bookId,
-                    Title = "Book",
-                    CoverImageUrl = "cover.jpg",
-                    Description = "desc",
-                    ISBN = "isbn",
-                    PublishedDate = DateTime.UtcNow,
-                    CategoryId = Guid.NewGuid()
+                seedContext.WishlistBooks.Add(new WishlistBook
+                {
+                    WishlistId = wishlistId,
+                    BookId = bookId,
+                    AddedDate = DateTime.UtcNow
                 });
-                seedContext.Wishlists.Add(new Wishlist { Id = wishlistId, Name = "Wishlist", UserId = "user" });
-                seedContext.WishlistBooks.Add(new WishlistBook { WishlistId = wishlistId, BookId = bookId });
                 seedContext.SaveChanges();
             }
 
             using (var context = new ApplicationDbContext(opts))
             {
                 var service = new WishlistService(new UnitOfWork(context));
-                await service.AddBookToWishlistAsync(wishlistId, bookId);
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddBookToWishlistAsync(wishlistId, bookId));
+                Assert.Equal("Book is already in the wishlist", exception.Message);
             }
 
             using (var verifyContext = new ApplicationDbContext(opts))
             {
-                var count = verifyContext.WishlistBooks.Count(wb => wb.WishlistId == wishlistId && wb.BookId == bookId);
-                Assert.Equal(1, count); // Should still be only one
+                var wishlistBooks = verifyContext.WishlistBooks
+                    .Where(wb => wb.WishlistId == wishlistId && wb.BookId == bookId)
+                    .ToList();
+                Assert.Single(wishlistBooks);
             }
         }
 
@@ -218,6 +219,57 @@ namespace FBookRating.Tests.Services
                 await service.RemoveBookFromWishlistAsync(wishlistId, bookId);
             }
             // No exception means pass
+        }
+
+        [Fact]
+        public async Task AddWishlistAsync_WithInvalidData_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddWishlistAsync_WithInvalidData_ShouldThrowValidationException));
+            var userId = "test-user-id";
+            var invalidWishlistDTO = new WishlistCreateDTO
+            {
+                Name = "A" // Too short
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new WishlistService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddWishlistAsync(invalidWishlistDTO, userId));
+            }
+        }
+
+        [Fact]
+        public async Task AddWishlistAsync_WithMissingRequiredFields_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddWishlistAsync_WithMissingRequiredFields_ShouldThrowValidationException));
+            var userId = "test-user-id";
+            var invalidWishlistDTO = new WishlistCreateDTO
+            {
+                Name = null
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new WishlistService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddWishlistAsync(invalidWishlistDTO, userId));
+            }
+        }
+
+        [Fact]
+        public async Task AddBookToWishlistAsync_WithInvalidIds_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddBookToWishlistAsync_WithInvalidIds_ShouldThrowValidationException));
+            var invalidWishlistId = Guid.Empty;
+            var invalidBookId = Guid.Empty;
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new WishlistService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddBookToWishlistAsync(invalidWishlistId, invalidBookId));
+            }
         }
     }
 } 
