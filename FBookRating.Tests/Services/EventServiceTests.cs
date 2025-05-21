@@ -203,10 +203,10 @@ namespace FBookRating.Tests.Services
             var opts = CreateNewContextOptions(nameof(AddEventAsync_WithMissingRequiredFields_ShouldThrowValidationException));
             var invalidEventDTO = new EventCreateDTO
             {
-                Name = null,
-                Location = null,
+                Name = string.Empty,
+                Location = string.Empty,
                 StartDate = DateTime.Now,
-                Description = null
+                Description = string.Empty
             };
 
             using (var context = new ApplicationDbContext(opts))
