@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Data_Access_Layer;
+using System.ComponentModel.DataAnnotations;
 
 namespace FBookRating.Tests.Services
 {
@@ -74,7 +75,7 @@ namespace FBookRating.Tests.Services
             var newPublisherDTO = new PublisherCreateDTO
             {
                 Name = "New Publisher",
-                Website = "www.newpublisher.com",
+                Website = "https://www.newpublisher.com",
                 Address = "New Address"
             };
 
@@ -88,7 +89,7 @@ namespace FBookRating.Tests.Services
             {
                 var publisher = verifyContext.Publishers.SingleOrDefault(p => p.Name == "New Publisher");
                 Assert.NotNull(publisher);
-                Assert.Equal("www.newpublisher.com", publisher.Website);
+                Assert.Equal("https://www.newpublisher.com", publisher.Website);
                 Assert.Equal("New Address", publisher.Address);
             }
         }
@@ -104,7 +105,7 @@ namespace FBookRating.Tests.Services
                 {
                     Id = publisherId,
                     Name = "Old Name",
-                    Website = "www.old.com",
+                    Website = "https://www.old.com",
                     Address = "Old Address"
                 });
                 seedContext.SaveChanges();
@@ -113,7 +114,7 @@ namespace FBookRating.Tests.Services
             var updateDTO = new PublisherUpdateDTO
             {
                 Name = "Updated Name",
-                Website = "www.updated.com",
+                Website = "https://www.updated.com",
                 Address = "Updated Address"
             };
 
@@ -128,7 +129,7 @@ namespace FBookRating.Tests.Services
                 var publisher = verifyContext.Publishers.SingleOrDefault(p => p.Id == publisherId);
                 Assert.NotNull(publisher);
                 Assert.Equal("Updated Name", publisher.Name);
-                Assert.Equal("www.updated.com", publisher.Website);
+                Assert.Equal("https://www.updated.com", publisher.Website);
                 Assert.Equal("Updated Address", publisher.Address);
             }
         }
@@ -154,6 +155,64 @@ namespace FBookRating.Tests.Services
             {
                 var publisher = verifyContext.Publishers.SingleOrDefault(p => p.Id == publisherId);
                 Assert.Null(publisher);
+            }
+        }
+
+        [Fact]
+        public async Task AddPublisherAsync_WithInvalidData_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddPublisherAsync_WithInvalidData_ShouldThrowValidationException));
+            var invalidPublisherDTO = new PublisherCreateDTO
+            {
+                Name = "A", // Too short
+                Website = "invalid-url", // Invalid URL
+                Address = "A" // Too short
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new PublisherService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddPublisherAsync(invalidPublisherDTO));
+            }
+        }
+
+        [Fact]
+        public async Task AddPublisherAsync_WithMissingRequiredFields_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddPublisherAsync_WithMissingRequiredFields_ShouldThrowValidationException));
+            var invalidPublisherDTO = new PublisherCreateDTO
+            {
+                Name = null,
+                Website = null,
+                Address = null
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new PublisherService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddPublisherAsync(invalidPublisherDTO));
+            }
+        }
+
+        [Fact]
+        public async Task UpdatePublisherAsync_WithInvalidData_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(UpdatePublisherAsync_WithInvalidData_ShouldThrowValidationException));
+            var publisherId = Guid.NewGuid();
+            var invalidPublisherDTO = new PublisherUpdateDTO
+            {
+                Name = "A", // Too short
+                Website = "invalid-url", // Invalid URL
+                Address = "A" // Too short
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new PublisherService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.UpdatePublisherAsync(publisherId, invalidPublisherDTO));
             }
         }
     }

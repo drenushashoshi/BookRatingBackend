@@ -3,6 +3,7 @@ using Data_Access_Layer.UnitOfWork;
 using FBookRating.Models.DTOs.Event;
 using FBookRating.Services.IServices;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace FBookRating.Services
 {
@@ -67,6 +68,13 @@ namespace FBookRating.Services
 
         public async Task AddEventAsync(EventCreateDTO newEventDTO)
         {
+            var validationContext = new ValidationContext(newEventDTO);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(newEventDTO, validationContext, validationResults, true))
+            {
+                throw new ValidationException(validationResults.First().ErrorMessage);
+            }
+
             var eventEntity = new Event
             {
                 Name = newEventDTO.Name,
@@ -81,6 +89,11 @@ namespace FBookRating.Services
 
         public async Task AddBookToEventAsync(Guid eventId, Guid bookId)
         {
+            if (eventId == Guid.Empty || bookId == Guid.Empty)
+            {
+                throw new ValidationException("Invalid Event ID or Book ID");
+            }
+
             var bookEvent = new BookEvent { EventId = eventId, BookId = bookId };
             _unitOfWork.Repository<BookEvent>().Create(bookEvent);
             await _unitOfWork.Repository<BookEvent>().SaveChangesAsync();

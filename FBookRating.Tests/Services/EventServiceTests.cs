@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Data_Access_Layer;
+using System.ComponentModel.DataAnnotations;
 
 namespace FBookRating.Tests.Services
 {
@@ -173,6 +174,61 @@ namespace FBookRating.Tests.Services
             {
                 var bookEvent = verifyContext.BookEvents.SingleOrDefault(be => be.EventId == eventId && be.BookId == bookId);
                 Assert.Null(bookEvent);
+            }
+        }
+
+        [Fact]
+        public async Task AddEventAsync_WithInvalidData_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddEventAsync_WithInvalidData_ShouldThrowValidationException));
+            var invalidEventDTO = new EventCreateDTO
+            {
+                Name = "A", // Too short
+                Location = "L", // Too short
+                StartDate = DateTime.Now,
+                Description = "Too short" // Too short
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new EventService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddEventAsync(invalidEventDTO));
+            }
+        }
+
+        [Fact]
+        public async Task AddEventAsync_WithMissingRequiredFields_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddEventAsync_WithMissingRequiredFields_ShouldThrowValidationException));
+            var invalidEventDTO = new EventCreateDTO
+            {
+                Name = null,
+                Location = null,
+                StartDate = DateTime.Now,
+                Description = null
+            };
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new EventService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddEventAsync(invalidEventDTO));
+            }
+        }
+
+        [Fact]
+        public async Task AddBookToEventAsync_WithInvalidIds_ShouldThrowValidationException()
+        {
+            var opts = CreateNewContextOptions(nameof(AddBookToEventAsync_WithInvalidIds_ShouldThrowValidationException));
+            var invalidEventId = Guid.Empty;
+            var invalidBookId = Guid.Empty;
+
+            using (var context = new ApplicationDbContext(opts))
+            {
+                var service = new EventService(new UnitOfWork(context));
+                var exception = await Assert.ThrowsAsync<ValidationException>(() => 
+                    service.AddBookToEventAsync(invalidEventId, invalidBookId));
             }
         }
     }
