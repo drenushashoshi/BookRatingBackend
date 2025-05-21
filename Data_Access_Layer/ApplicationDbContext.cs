@@ -22,6 +22,7 @@ namespace Data_Access_Layer
         public DbSet<Author> Authors { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistBook> WishlistBooks { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<BookEvent> BookEvents { get; set; }
 
